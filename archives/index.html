@@ -409,15 +409,12 @@
 
 
 
-    <footer class="page-footer bg-color">
+    
+<footer class="page-footer bg-color">
     <div class="container row center-align">
         <div class="col s12 m8 l8 copy-right">
-            Copyright&nbsp;&copy;
-            <span id="year">年份</span>
-            <a href="https://vonhop.github.io" target="_blank">ChenKe</a>
-            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
-            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
-            <br>
+            Copyright&nbsp;&copy;2019 ChenKe. All Rights Reserved.
+     
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
                 class="white-color">125</span>&nbsp;字
@@ -438,9 +435,10 @@
                     class="white-color"></span>&nbsp;人
             </span>
             
+
             <br>
             
-            <span id="sitetime">载入运行时间...</span>
+            <span id="sitetime"></span>
             <script>
                 function siteTime() {
                     window.setTimeout("siteTime()", 1000);
@@ -452,7 +450,7 @@
                     var today = new Date();
                     var startYear = "2019";
                     var startMonth = "12";
-                    var startDate = "6";
+                    var startDate = "5";
                     var startHour = "0";
                     var startMinute = "0";
                     var startSecond = "0";
@@ -472,6 +470,7 @@
                         minutes);
                     var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
                         diffMinutes * minutes) / seconds);
+                        /*
                     if (startYear == todayYear) {
                         document.getElementById("year").innerHTML = todayYear;
                         document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
@@ -481,11 +480,13 @@
                         document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
                             " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
                     }
+                    */
                 }
                 setInterval(siteTime, 1000);
             </script>
             
             <br>
+
             
         </div>
         <div class="col s12 m4 l4 social-link social-statis">
@@ -524,7 +525,6 @@
 </footer>
 
 <div class="progress-bar"></div>
-
 
     <!-- 搜索遮罩框 -->
 <div id="searchModal" class="modal">
