@@ -37,8 +37,6 @@
             <div class="brand-logo">
                 <a href="/" class="waves-effect waves-light">
                     
-                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
-                    
                     <span class="logo-span">Just Because</span>
                 </a>
             </div>
@@ -123,8 +121,6 @@
 <div id="mobile-nav" class="side-nav sidenav">
 
     <div class="mobile-head bg-color">
-        
-        <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
         <div class="logo-name">Just Because</div>
         <div class="logo-desc">
@@ -487,8 +483,12 @@ $(function () {
     <footer class="page-footer bg-color">
     <div class="container row center-align">
         <div class="col s12 m8 l8 copy-right">
-            Copyright&nbsp;&copy;2019 ChenKe. All Rights Reserved.
-     
+            Copyright&nbsp;&copy;
+            <span id="year">年份</span>
+            <a href="https://vonhop.github.io" target="_blank">ChenKe</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
                 class="white-color">125</span>&nbsp;字
@@ -509,10 +509,9 @@ $(function () {
                     class="white-color"></span>&nbsp;人
             </span>
             
-
             <br>
             
-            <span id="sitetime"></span>
+            <span id="sitetime">载入运行时间...</span>
             <script>
                 function siteTime() {
                     window.setTimeout("siteTime()", 1000);
@@ -544,7 +543,6 @@ $(function () {
                         minutes);
                     var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
                         diffMinutes * minutes) / seconds);
-                        /*
                     if (startYear == todayYear) {
                         document.getElementById("year").innerHTML = todayYear;
                         document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
@@ -554,13 +552,11 @@ $(function () {
                         document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
                             " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
                     }
-                    */
                 }
                 setInterval(siteTime, 1000);
             </script>
             
             <br>
-
             
         </div>
         <div class="col s12 m4 l4 social-link social-statis">
