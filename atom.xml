@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Just Because</title>
   
-  
+  <subtitle>为欢几何</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vonhop.github.io/"/>
