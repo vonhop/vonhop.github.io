@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>Markdown Test</title>
+      <link href="/2019/12/06/markdown-test/"/>
+      <url>/2019/12/06/markdown-test/</url>
+      
+        <content type="html"><![CDATA[<h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h4 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h4><h5 id="五级标题"><a href="#五级标题" class="headerlink" title="五级标题"></a>五级标题</h5><h6 id="六级标题"><a href="#六级标题" class="headerlink" title="六级标题"></a>六级标题</h6><p><em>斜体文本</em><br><strong>粗体文本</strong><br><strong><em>粗斜体文本</em></strong></p><p>分隔线</p><hr><p><del>删除线</del></p><p><u>下划线</u></p><p>脚注 [AB]<br>[AB]: 这是脚注</p><ul><li>第一项</li><li>第三项</li><li>第二项</li></ul><p><strong>这里用 * 、-、+效果一样，支持无序列表</strong></p><ol><li>第一项</li><li>第三项</li><li>第二项</li></ol><p><strong>数字加.表示有序列表</strong></p><ol><li>第一项<ul><li>第一项的第一个元素</li><li>第一项的第二个元素</li></ul></li><li>第二项<ul><li>第二项的第一个</li><li>第二项的第二个</li></ul></li></ol><p><strong>空格有时候不能有，有时候又是不可缺少的</strong></p><blockquote><p>区块最外层</p><blockquote><p>区块第二层</p><blockquote><p>区块第三层</p><blockquote><p>四</p></blockquote></blockquote></blockquote></blockquote><ol><li>第一项<blockquote><p>区块<br>区块</p></blockquote></li><li>第二项</li></ol><p><strong>代码片段</strong></p><blockquote><p><code>printf()</code>函数<br>代码区块可以使用四个空格  或者  ```+指定语言</p></blockquote><pre><code>int main(){return 0;}</code></pre><pre class=" language-Ç++"><code class="language-Ç++">int main(){return 0;}</code></pre><p><strong>链接</strong></p><blockquote><p>这是一个链接 <a href="www.baidu.com">百度</a><br><a href="http://www.baidu.com">http://www.baidu.com</a>//必须要带http<br>这个链接用1作为网址变量 [百度][1]<br>这个链接用github作为网址变量[github][github]<br>[1]:<a href="http://www.baidu.com">www.baidu.com</a><br>[github]:<a href="http://www.github.com">www.github.com</a></p></blockquote><p><strong>图片</strong></p><blockquote><p><img src="http://static.runoob.com/images/runoob-logo.png" alt="网络图片"><br><img src="http://static.runoob.com/images/runoob-logo.png" alt="" title="RUNOOB"><br>这个链接用1作为网址变量[图片][2]<br>[2]:<a href="http://static.runoob.com/images/runoob-logo.png">http://static.runoob.com/images/runoob-logo.png</a><br>![本地图片][/NodeWebKit/icon.png]  //<em>本地图片有问题</em></p></blockquote><blockquote><p>图片大小<br>![图]<img src="http://static.runoob.com/images/runoob-logo.png" width="50%"></p></blockquote><p><strong>表格</strong></p><blockquote><p>表格使用 | 来分隔不同的单元格，使用 - 来分隔表头和其他行。<br>|  表头  |  表头  |<br>|  —-  |  —-  |<br>|  单元格  |  单元格  |<br>|  单元格  |  单元格  |</p></blockquote><blockquote><p>我们还可以设置表格的对其方式<br>|左对齐|居中对齐|右对齐|<br>|:—|—:|:—:|<br>|单元格|单元格|单元格|</p></blockquote><p><strong>支持html标签有：<kbd> <b> <i> <em> <sup> <sub> <br>等</sub></sup></em></i></b></kbd></strong></p><b><i><em><blockquote><p><kbd>Ctrl</kbd><br>??????????</p></blockquote><p><strong>转义</strong></p><blockquote><p>**不是粗体</p></blockquote><p><strong>数学公式</strong></p><blockquote><p>使用两个美元符 $$ 包裹 TeX 或 LaTeX 格式的数学公式来实现</p></blockquote><p><strong>还可以画流程图等</strong></p></em></i></b><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Markdown </tag>
+            
+            <tag> 垃圾桶 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2019/12/04/hello-world/"/>
       <url>/2019/12/04/hello-world/</url>
