@@ -482,7 +482,7 @@ return 0;
 <blockquote>
 <p>我们还可以设置表格的对其方式<br>|左对齐|居中对齐|右对齐|<br>|:—|—:|:—:|<br>|单元格|单元格|单元格|</p>
 </blockquote>
-<p><strong>支持html标签有：<kbd> <b> <i> <em> <sup> <sub> <br>等</sub></sup></em></i></b></kbd></strong></p><b><i><em>
+<p><strong>支持html标签有：<kbd> <b> <i> <em> <sup> <sub> <br>等</sub></sup></em></i></b></kbd></strong></p>
 <blockquote>
 <p><kbd>Ctrl</kbd><br>??????????</p>
 </blockquote>
@@ -495,7 +495,7 @@ return 0;
 <p>使用两个美元符 $$ 包裹 TeX 或 LaTeX 格式的数学公式来实现</p>
 </blockquote>
 <p><strong>还可以画流程图等</strong></p>
-</em></i></b><script>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -832,47 +832,33 @@ return 0;
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/12/06/markdown-test/">
+                <a href="/2020/03/01/hdmap-roi/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="Markdown Test">
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="apollo5.5 中的高精地图ROI过滤">
                         
-                        <span class="card-title">Markdown Test</span>
+                        <span class="card-title">apollo5.5 中的高精地图ROI过滤</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            一级标题二级标题三级标题四级标题五级标题六级标题斜体文本粗体文本粗斜体文本
-分隔线
+                            （本文出发点以及仍未很好解决的问题是如何从hdmap里面获取roi区域，以及在路口处将每个polygon拼合成一个封闭多边形，如下图：）
 
-删除线
-下划线
-脚注 [AB][AB]: 这是脚注
+（理想的拼接后情况当是如下图：）
 
-第一项
-第三项
-第二项
-
-这里用 * 、-、+效果一样，支持无序列表
-
-第一项
-第三项
-第二项
-
-数
+一：大致步骤​        建议先阅读apollo文档，以及本
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-12-06
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-03-01
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -881,16 +867,15 @@ return 0;
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Markdown/">
-                        <span class="chip bg-color">Markdown</span>
+                    <a href="/tags/Apollo/">
+                        <span class="chip bg-color">Apollo</span>
                     </a>
                     
-                    <a href="/tags/%E5%9E%83%E5%9C%BE%E6%A1%B6/">
-                        <span class="chip bg-color">垃圾桶</span>
+                    <a href="/tags/ROI/">
+                        <span class="chip bg-color">ROI</span>
                     </a>
                     
                 </div>
@@ -1074,7 +1059,7 @@ code[class*="language-"], pre[class*="language-"] { white-space: pre !important;
      
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">609</span>&nbsp;字
+                class="white-color">5k</span>&nbsp;字
             
             
             

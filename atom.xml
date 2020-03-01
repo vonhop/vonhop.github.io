@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vonhop.github.io/"/>
-  <updated>2019-12-06T15:47:13.054Z</updated>
+  <updated>2020-03-01T12:35:10.091Z</updated>
   <id>https://vonhop.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>apollo5.5 中的高精地图ROI过滤</title>
+    <link href="https://vonhop.github.io/2020/03/01/hdmap-roi/"/>
+    <id>https://vonhop.github.io/2020/03/01/hdmap-roi/</id>
+    <published>2020-03-01T08:11:07.000Z</published>
+    <updated>2020-03-01T12:35:10.091Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;（本文出发点以及仍未很好解决的问题是如何从hdmap里面获取roi区域，以及在路口处将每个polygon拼合成一个封闭多边形，如下图：）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/image-20200301145628900.png&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="Apollo" scheme="https://vonhop.github.io/tags/Apollo/"/>
+    
+      <category term="ROI" scheme="https://vonhop.github.io/tags/ROI/"/>
+    
+  </entry>
   
   <entry>
     <title>Markdown Test</title>
