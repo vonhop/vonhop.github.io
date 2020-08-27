@@ -4,10 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="文献调研——近两年基于Lidar的传统检测方法, Just Because">
-    <meta name="description" content="2018[IROS 2018] LiDAR-Based Object Tracking and Shape Estimation Using Polylines and Free-Space Information. [Paper]
-
-大多">
+    <meta name="keywords" content="(paper_reading) VoxelNet, Just Because">
+    <meta name="description" content="[2018 CVPR] VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection摘要VoxelNet舍弃手工特征工程，是一个特征提取+bbox预测的单阶段">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -15,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>文献调研——近两年基于Lidar的传统检测方法 | Just Because</title>
+    <title>(paper_reading) VoxelNet | Just Because</title>
     <link rel="icon" type="image/png" href="/medias/featureimages/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -217,13 +215,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        文献调研——近两年基于Lidar的传统检测方法
+                        (paper_reading) VoxelNet
                     </div>
                 </div>
             </div>
@@ -345,6 +343,10 @@
                                 <span class="chip bg-color">Lidar detection</span>
                             </a>
                         
+                            <a href="/tags/paper-reading/">
+                                <span class="chip bg-color">paper reading</span>
+                            </a>
+                        
                     </div>
                     
                 </div>
@@ -371,7 +373,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.6k
+                    974
                 </div>
                 
 
@@ -384,179 +386,36 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h4 id="2018"><a href="#2018" class="headerlink" title="2018"></a>2018</h4><p>[IROS 2018] LiDAR-Based Object Tracking and Shape Estimation Using Polylines and Free-Space Information. [<a href="https://ieeexplore.ieee.org/document/8593385">Paper</a>]</p>
+                <h4 id="2018-CVPR-VoxelNet-End-to-End-Learning-for-Point-Cloud-Based-3D-Object-Detection"><a href="#2018-CVPR-VoxelNet-End-to-End-Learning-for-Point-Cloud-Based-3D-Object-Detection" class="headerlink" title="[2018 CVPR] VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection"></a>[2018 CVPR] VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection</h4><h5 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h5><p>VoxelNet舍弃手工特征工程，是一个特征提取+bbox预测的单阶段端到端的可训练深度网络。主要是将点云划分成等空间的3D voxel，然后对每个voxel应用VFE来提取特征，再对所有voxel使用3D卷积聚合特征，最后回归包围框。</p>
+<p>相比于pointnet在1k左右数量的点提取特征，基于点云的目标检测随着点数增多带来了很高的计算和内存要求。<br>Scaling up 3D feature learning networks to orders of magnitude more points and to 3D detection tasks are the main challenges that we address in this paper.</p>
+<h5 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h5><p>划分栅格 -&gt; 多个VFE层提取栅格特征 -&gt; 3D卷积聚集特征 -&gt; 改进的RPN网络预测bbox<br><img src="/images/voxelnet.png" alt=""></p>
 <blockquote>
-<p>大多数跟踪方法使用边界框表示物体的几何形状，然而这在真实场景中有时是不合适的。因此本文提出使用2D折线来表示对象轮廓。同时考虑到对象姿势和形状的相互依赖性，本文的跟踪框架同时估计这两种状态。</p>
+<p><strong>划分栅格</strong><br>1、划分成相等空间大小的3D栅格。（如果用CVC那种弧形栅格会不会更好呢？）<br>2、由于每个栅格内点数不一致，设定一个点数上限T，然后从点数多于T的栅格里随机采样出T个点。<br>（论文说这有两个好处： computational savings ；decreases the imbalance of points between the voxels which reduces the sampling bias, and adds more variation to training）<br>3、扔进VFE层前的每个点初始特征为7维，其中vx, vy, vz为栅格内所有点的中心点。<br><img src="/images/voxel_1.png" alt=""><br>这样每个栅格的特征维数就是 Tx7。</p>
 </blockquote>
-<p>[TITS 2018] L-Shape Model Switching-Based Precise Motion Tracking of Moving Vehicles Using Laser Scanners. [<a href="https://ieeexplore.ieee.org/document/8168365">Paper</a>]</p>
 <blockquote>
-<p>跟踪过程中为了最小化由外观变化引起的误差，本文提出了一种基于L形模型切换的跟踪算法。</p>
-<p>1、首先从聚类点云中提取出L形特征；2、基于L形的卡尔曼跟踪器，使用运动+形状两个模型，匹配时先校正L形的角点，然后最近邻匹配；3、最后将L形转换到包围框形式。</p>
+<p>VFE层（本文使用的是两个相连的VFE层）<br><img src="/images/voxel_vfe.png" alt=""><br>全连接层同样是 BN + ReLU。<br>逐点最大池化，然后再和每个点的特征相连这个思想就是来自pointnet吧。。</p>
 </blockquote>
-<p>[TITS 2018] Road-Segmentation-Based Curb Detection Method for Self-Driving via a 3D-LiDAR Sensor. [<a href="https://ieeexplore.ieee.org/abstract/document/8291612">Paper</a>]</p>
 <blockquote>
-<p>本文基于3D Lidar数据，提出了一种实时的路边检测方法。首先使用基于线性平面拟合方法粗略分割地面，然后使用Sliding-Beam方法再次分割地面，最后采用路缘检测方法来获得每个路段的路缘位置。在同济大学VeCaN实验室自动驾驶汽车获得的数据集上测试了该方法。每帧的平均处理时间仅为12毫秒左右。</p>
+<p>卷积中间层就是连续多个3D卷积，其感受野逐渐增加，从而聚合voxel特征。<br>We use ConvMD(cin, cout, k, s, p) to represent an M dimensional convolution operator where cin and cout are the number of input and output channels, k, s, and p are the M-dimensional vectors corresponding to kernel size, stride size and padding size respectively. When the size across the M-dimensions are the same, we use a scalar to represent the size e.g. k for k = (k, k, k).<br>每一个ConvMD都是一个3D卷积 + BN + ReLU。</p>
 </blockquote>
-<p>[ICRA 2018] Realtime Vehicle and Pedestrian Tracking for Didi Udacity Self-Driving Car Challenge. [<a href="https://ieeexplore.ieee.org/document/8460913">Paper</a>]</p>
 <blockquote>
-<p>融合来自各种传感器（相机，LIDAR，雷达，IMU）的数据 + EKF，进行行人和车辆跟踪。</p>
+<p>修改的RPN网络<br><img src="/images/voxel_rpn.png" alt=""><br>前面三个通过步长为2的卷积逐渐降采样特征图，后面三个是上采样卷积。将三个上采样的卷积串联，直接预测输出：(1)probability score map and (2) a regression map。<br>每个卷积层Conv2D后面也是有BN + ReLU的。</p>
 </blockquote>
-<p>[IV 2018] Generic Vehicle Tracking Framework Capable of Handling Occlusions Based on Modified Mixture Particle Filter. [<a href="https://arxiv.org/abs/1809.10237">Paper</a>]</p>
 <blockquote>
-<p>本文提出了一种基于改进的混合粒子滤波器的通用车辆跟踪框架，每个对象由粒子假设近似，无需明确的数据关联。同时在预测时纳入基于学习的行为模型，而不是纯车辆运动模型。</p>
+<p>损失函数（主要对RPN而言，是分类损失 + 回归损失）<br>首先在训练集中，根据事先定义的锚框尺寸与中心点生成一系列锚框，然后根据这些锚框与ground truth box的iou计算分类：1、positive anchors；2、negative anchors；3、 don’t care anchors。<br>匹配规则是：<br><img src="/images/voxel_pipei.png" alt=""><br>（这里的一个问题是论文里生成car或其它类型的锚框时，尺寸固定只有一个，角度只有0和90这两个，会不会太僵硬了？）（对于car：la = 3.9, wa = 1.6, ha = 1.56，每个锚框中心点的z都为-1）</p>
+<p>然后上面的RPN网络回归的目标是一个7维的张量。<br><img src="/images/voxel_tt.png" alt=""><br>g代表是ground truth；a代表是positive anchors。</p>
+<p>最后的损失函数是：<br><img src="/images/voxel_loss.png" alt=""></p>
 </blockquote>
-<p>[IV 2018] A Reliable Road Segmentation and Edge Extraction for Sparse 3D Lidar Data. [<a href="https://ieeexplore.ieee.org/document/8500486">Paper</a>]</p>
-<blockquote>
-<p>针对稀疏点云的地面分割问题，本文通过融合多帧点云得到密集数据来进行地面分割。</p>
-<p><img src="/images/image-20200531172425020.png" alt=""></p>
-</blockquote>
-<p>[IV 2018] Fast Multi-Pass 3D Point Segmentation Based on a Structured Mesh Graph for Ground Vehicles. [<a href="https://ieeexplore.ieee.org/document/8500552/?denied=">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种基于网格图的快速多通道的Velodyne Lidar点云实时分割算法。该算法利用Velodyne传感器的固有传感器模式作为先验，创建一个结构化的网状图。</p>
-</blockquote>
-<p>[IV 2018] An Orientation Corrected Bounding Box Fit Based on the Convex Hull under Real Time Constraints. [<a href="https://ieeexplore.ieee.org/document/8500692">Paper</a>]</p>
-<blockquote>
-<p>首先使用基于凸包的最小包围矩形构建包围框，然后使用特征直线的方法对包围框进行朝向角校正。</p>
-</blockquote>
-<p>[ITSC 2018] A Slope-robust Cascaded Ground Segmentation in 3D Point Cloud for Autonomous Vehicles. [<a href="https://ieeexplore.ieee.org/document/8569534">Paper</a>]</p>
-<blockquote>
-<p>本文主要针对具有挑战性的地形的地面分割，提出了一种基于Lidar的斜坡鲁棒级联地面分割方法。包括两个主要步骤：首先使用传感器的几何形状以及扫描中连续环之间的距离过滤大部分非地面点；然后使用多区域RANSAC平面拟合将扫描中的其余非地面点与地面点分开。</p>
-<p><img src="/images/image-20200530110149347.png" alt=""></p>
-</blockquote>
-<p>[ITSC 2018] 3D Ground Point Classification for Automotive Scenarios.[<a href="https://ieeexplore.ieee.org/document/8569898">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种依赖点云几何特征（法向量）的地面点分割算法。我们提出了一种基于各点邻居距离的倒数的加权法向量估计，该度量考虑到了汽车应用中LiDAR传感器向下倾斜的安装位置。</p>
-</blockquote>
-<p>[ITSC 2018] Multi-Object Tracking with Interacting Vehicles and Road Map Information.[<a href="https://ieeexplore.ieee.org/document/8569701">Paper</a>]</p>
-<blockquote>
-<p>目前大多数的多物体跟踪算法都假设物体独立运动。然而在真实交通情况下，物体之间会相互影响，而且由于可驾驶区域的限制，物体独立运动的假设并不能实现。本文提出了一种适应多物体跟踪系统的方法，来模拟车辆之间的相互作用，以及当前的道路几何形状。本文扩展了滤波器的预测步骤，以方便利用智能驾驶模型对物体之间的交互作用进行建模。此外，为了考虑道路地图信息，采用了高精道路地图的近似值。</p>
-</blockquote>
-<p>[ITSC 2018]  Fast Dual Decomposition based Mesh-Graph Clustering for Point Clouds. [<a href="https://ieeexplore.ieee.org/document/8569999">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种快速、高效的算法来聚类LiDAR产生的三维点云。该聚类算法基于图理论和局部上下文信息，采用基于传感器固有光束模式的感知定律对图边进行权重编码。同时为了提高速度，将聚类管道分为垂直聚类和水平聚类。因此，本文将图形分割成多个垂直和水平线图，并联处理。最后，利用广度优先搜索算法将分割后的结果合并成相干对象。</p>
-</blockquote>
-<p>[ICVES 2018] An Adaptive 3D Grid-Based Clustering Algorithm for Automotive High Resolution Radar Sensor. [<a href="https://ieeexplore.ieee.org/document/8519483">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种基于雷达点云和range/angel/velocity网格的自适应聚类方法。改进的基于3D栅格的DBSCAN算法，聚类时考虑点之间的range、angel和velocity的相似性，同时使用滑动窗口而不是传统的欧几里得距离来加速聚类。为了消除参数依赖性和由于实际雷达测量的不确定性而导致的不正确聚类，该方法根据跟踪和估计的物体轮廓，扩展了基于模型的聚类窗口。</p>
-</blockquote>
-<p>[arXiv 2018] The Greedy Dirichlet Process Filter - An Online Clustering Multi-Target Tracker. [<a href="https://arxiv.org/abs/1811.05911">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种新型的多目标跟踪器：Greedy Dirichlet Process Filter (GDPF)，它基于非参数贝叶斯模型Dirichlet Processes和快速后置计算算法Sequential Updating and Greedy Search (SUGS)，并提出了一种新型的多目标跟踪器。通过添加时间依赖性，得到了一个实时的跟踪框架，而不需要之前的聚类或数据关联步骤。</p>
-</blockquote>
-<h3 id="2019"><a href="#2019" class="headerlink" title="2019"></a>2019</h3><p>[IROS 2019] PASS3D: Precise and Accelerated Semantic Segmentation for 3D Point Cloud. [<a href="https://arxiv.org/abs/1909.01643">Paper</a>]</p>
-<blockquote>
-<p>本文使用PASS3D框架来实现3D点云的逐点语义分割。该框架结合传统方法与深度学习方法，包括两个阶段：候选聚类加速阶段与逐点语义预测阶段。相比于基于图像的语义分割，3D场景的对象天然都是相互分离的，不重叠的，因此我们首先使用传统方法加速生成候选聚类，主要分成三步：基于迭代多平面线性拟合方法去地面；聚类依据Lidar特点，使用 ring-based的方法；候选精炼阶段，由于去地面时把障碍物的一部分也归为了地面，比如部分车轮等，因此需要扩充。第二阶段基于神经网络对这些候选聚类进一步处理，以估计每个点的语义标签。最后在KITTI数据集评估。</p>
-<p><img src="/images/image-20200531140121274.png" alt=""></p>
-</blockquote>
-<p>[IROS 2019] On Enhancing Ground Surface Detection from Sparse Lidar Point. [<a href="https://ieeexplore.ieee.org/document/8968135">Paper</a>]</p>
-<blockquote>
-<p>本文针对低分辨率Lidar产生的稀疏点云，提出了一种地面分割方法。本文方法基于平面拟合的RANSAC方法，主要改进：1、通过逐点(曲线)切线加强内点确认；2、不相交的多平面拟合。</p>
-</blockquote>
-<p>[IROS 2019] Normal Distribution Mixture Matching based Model Free Object Tracking Using 2D LIDAR. [<a href="https://ieeexplore.ieee.org/document/8967876">Paper</a>]</p>
-<blockquote>
-<p>对于2D Lidar的多目标跟踪，本文使用基于正态混合分布的匹配方法，构建了一套无模型的目标跟踪算法。其中每个对象被建模成一个正态混合分布＋一个速度向量，这使得基于正态分布变换 （NDT） 算法能够准确估计对象的运动。同时在检测阶段使用基于极坐标栅格的连接组件分割方法。</p>
-<p><img src="/images/image-20200531141958162.png" alt=""></p>
-</blockquote>
-<p>[TITS 2019] Dynamic Vehicle Detection With Sparse Point Clouds Based on PE-CPD. [<a href="https://ieeexplore.ieee.org/document/8467531">Paper</a>]</p>
-<blockquote>
-<p>由于点云稀疏，检测距离激光雷达较远的车辆是一个巨大的挑战。 针对这一问题，本文提出了一种基于似然场模型＋相干点漂移（CPD）的动态车辆检测方法，该方法包括动态目标检测和动态车辆确认的步骤。 基于距离和网格角分辨率的自适应阈值可用于检测动态对象。 提出了基于CPD（PE-CPD）的姿态估计来估计车辆姿态。 标定级数算法与PE-CPD改进的贝叶斯滤波器相结合，可用于更新车辆状态。</p>
-</blockquote>
-<p>[IV 2019] Detection-by-Tracking Boosted Online 3D Multi-Object Tracking. [<a href="https://ieeexplore.ieee.org/abstract/document/8813856/">Paper</a>]</p>
-<blockquote>
-<p>本文建立了一个基于贝叶斯模型的，整合二维和三维特征的基于Lidar的多目标跟踪系统。此外，本文使用detection-by-tracking方法，在遮挡和丢失障碍物时可以基于跟踪结果得到准确的包围框。</p>
-</blockquote>
-<p>[IV 2019] Efficient Multi-Sensor Extended Target Tracking using GM-PHD Filter. [<a href="https://ieeexplore.ieee.org/document/8814257">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一个有效的多传感器（Radar、Stereo camera、Lidar）融合算法用来进行检测和跟踪。主要步骤：1）首先使用传统的聚类和标记方法从每个传感器中生成与感兴趣的目标相对应的合理一致的特征，2）围绕已确定的感兴趣的目标生成边界框，3）然后将每个传感器的边界框参数（测量值）送入在随机有限集（RFS）框架下开发的新型多传感器目标跟踪算法中。</p>
-</blockquote>
-<p>[IV 2019] Utilizing LiDAR Intensity in Object Tracking. [<a href="https://ieeexplore.ieee.org/document/8814079">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种新的方法来从LiDAR反射强度中提取特征，以改善目标跟踪效果。</p>
-</blockquote>
-<p>[IV 2019] An Online Multi-lidar Dynamic Occupancy Mapping Method. [<a href="https://ieeexplore.ieee.org/document/8814006/">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种新的基于相位一致性原理的动态占有地图（DOM）构建方法，此外，我们的框架还提供了一些常见的挑战的解决方案，如多激光雷达融合和地面估计。</p>
-</blockquote>
-<p>[ITSC 2019] LATTE: Accelerating LiDAR Point Cloud Annotation via Sensor Fusion, One-Click Annotation, and Tracking.[<a href="https://arxiv.org/abs/1904.09085">Paper</a>] [<a href="https://github.com/bernwang/LATTE">Code</a>]</p>
-<blockquote>
-<p>Lidar点云注释工具</p>
-<p>1）传感器融合：利用基于图像的检测算法来自动对已校准的图像进行预标记，然后将标记传输到点云。 </p>
-<p>2）一键注释：无需绘制3D边界框或逐点标签，而是将注释简化为只需单击目标对象即可自动为目标生成边界框。</p>
-<p> 3）跟踪：将跟踪集成到序列注释中，这样就可以将标签从一帧转移到后续帧，从而显着减少重复标记。</p>
-<p>（该工具中去地面用的是多平面线性拟合，聚类是DBSCAN，跟踪是卡尔曼滤波）</p>
-</blockquote>
-<p>[ITSC 2019] A Multi-Stage Clustering Framework for Automotive Radar Data. [<a href="https://arxiv.org/abs/1907.03511">Paper</a>]</p>
-<blockquote>
-<p>本文描述了一种聚类Radar数据的新方法，分为三步：1、过滤静态背景数据；2、点云聚类；3、聚类融合。同时进行了聚类算法的参数优化，如自适应参数的DBSCAN。</p>
-</blockquote>
-<p>[ICVES 2019] A Novel Method of Traversable Area Extraction Fused With LiDAR Odometry in Off-road Environment. [<a href="https://ieeexplore.ieee.org/abstract/document/8906333">Paper</a>]</p>
-<blockquote>
-<p>越野环境与城市地区相比，不仅有凸的障碍物，还有凹的障碍物和悬崖峭壁等。本文介绍了一种越野环境中基于多类障碍物探测的可穿越区域提取方法，以及基于LiDAR测距结果的可穿越区域提取方法。融合三个激光雷达；根据贝叶斯理论将历史可穿越区域与当前结果混合在一起。</p>
-</blockquote>
-<p>[IEEE Access] Ground Surface Filtering of 3D Point Clouds Based on Hybrid Regression Technique. [<a href="https://ieeexplore.ieee.org/document/8642822">Paper</a>]</p>
-<blockquote>
-<p>本文将高斯过程回归（GPR）与鲁棒性局部加权回归（RLWR）相结合，将投射在极坐标栅格图上的点云分为径向滤波和周向滤波两部分，可以消除离群值的影响，对地表进行鲁棒性建模。首先，应用RLWR结合梯度滤波，对径向方向的采样点进行拟合，排除离群点，得到拟合地表线。所有的径向拟合线构成了整个平面的种子骨架。然后，根据骨架的同圆周向的种子线，应用GPR构建地平面模型。</p>
-<p><img src="/images/image-20200531205204449.png" alt=""></p>
-</blockquote>
-<p>[arXiv 2019] A Baseline for 3D Multi-Object Tracking. [<a href="https://arxiv.org/abs/1907.03961">Paper</a>] [<a href="https://github.com/xinshuoweng/AB3DMOT">Code</a>]</p>
-<blockquote>
-<p>使用3D卡尔曼滤波和匈牙利算法构建基于Lidar的多目标跟踪框架。使用3D IOU作为关联特征，并提出新的评估标准sAMOTA。</p>
-</blockquote>
-<p>[arXiv 2019] Online Multi-Target Tracking for Maneuvering Vehicles in Dynamic Road Context. [<a href="https://arxiv.org/abs/1912.00603">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种在线多目标跟踪(MOT)框架，使用卡尔曼滤波方法；交互多模型(IMM)方法；匈牙利匹配。同时道路上下文信息被集成到IMM的时间变化概率矩阵(TPM)中进行调整，以根据路段和交通标志/信号来调节机动性。</p>
-<p><img src="/images/image-20200531210301366.png" alt=""></p>
-</blockquote>
-<p>[arXiv 2019] Low-cost LIDAR based Vehicle Pose Estimation and Tracking. [<a href="https://arxiv.org/abs/1910.01701">Paper</a>]</p>
-<blockquote>
-<p>基于本文之前优化的L-Shape拟合算法，在这里提出了一种基于数据驱动和模型的方法，用于车辆的鲁棒性分割和跟踪。新方法利用T-linkage RANSAC来对移动中的汽车进行鲁棒性分割。此外，在分割结果的基础上建立了一个具有多模型关联（MMA）的车辆跟踪系统</p>
-</blockquote>
-<h3 id="2020"><a href="#2020" class="headerlink" title="2020"></a>2020</h3><p>[TITS 2020] Online Multiple Maneuvering Vehicle Tracking System Based on Multi-Model Smooth Variable Structure Filter. [<a href="https://ieeexplore.ieee.org/document/8658194">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种新的基于LiDAR的在线多车辆跟踪框架，使用一种新的在线多模型平滑变结构滤波器（MMSVSF）来解决跟踪不稳定问题。各个子模块并行运行，可以减少建模不确定的影响的同时保证实时性。</p>
-</blockquote>
-<p>[TITS 2020] Multi-Target State Estimation Using Interactive Kalman Filter for Multi-Vehicle Tracking. [<a href="https://ieeexplore.ieee.org/document/8700616">Paper</a>]</p>
-<blockquote>
-<p>本文提出使用交互式卡尔曼滤波器（IKF）来演示目标之间的交互作用，以了解目标对象的行为如何受到其邻居行为的影响。在此方法中，将构建IKF节点网络，以使每个节点与每个目标相关联。节点之间存在边，表示相应的目标对其相互影响。最佳IKF增益的计算以及对MOTP，MOTA和MSE度量的评估说明了所提出的滤波器在车辆跟踪中的有效性。</p>
-</blockquote>
-<p>[TITS 2020] A Probability Occupancy Grid Based Approach for Real-Time LiDAR Ground Segmentation. [<a href="https://ieeexplore.ieee.org/document/8666170">Paper</a>]</p>
-<blockquote>
-<p>为了解决地面分割中存在的过/欠分割以及分割缓慢的问题，本文使用基于概率占有栅格的实时地面分割方法。首先建立极坐标栅格，然后基于历史观测为每个栅格指定其为地面/非地面的概率。然后使用上述标记为地面点的栅格进行加权线性回归，得到地面斜率。</p>
-<p><img src="/images/image-20200531162306737.png" alt=""></p>
-</blockquote>
-<p>[ICRA 2020] Learning  to  Optimally  Segment  Point  Clouds. [<a href="https://ieeexplore.ieee.org/abstract/document/8954778">Paper</a>] [<a href="https://github.com/peiyunh/opcseg">Code</a>]</p>
-<blockquote>
-<p>我们专注于LiDAR点云的类识别实例分割问题。我们提出了一种将图理论搜索与数据驱动学习相结合的方法：它在一组候选分割中进行搜索，并根据基于数据驱动的”objectness”的点模型返回一个单独的得分较好的分割。为了进行评估，我们将KITTI 3D检测作为分割基准，并通过实证证明，我们的算法在分割点云上的表现明显优于以往基于对象的自下而上和自上而下的分割算法。</p>
-</blockquote>
-<p>[ICRA 2020] A*3D Dataset: Towards Autonomous Driving in Challenging Environments. [<a href="https://arxiv.org/abs/1909.07541">Paper</a>]</p>
-<blockquote>
-<p>一个数据集，相比于KITTI，更具挑战性和多样性，扩展了大量重度遮挡和夜间帧，解决了现有数据集的空白。</p>
-</blockquote>
-<p>[arXiv 2020] JRMOT: A Real-Time 3D Multi-Object Tracker and a New Large-Scale Dataset. [<a href="https://arxiv.org/abs/2002.08397">Paper</a>] [<a href="https://github.com/StanfordVL/JRMOT_ROS">Code</a>]</p>
-<blockquote>
-<p>本文提出了一个新型的3D MOT系统：JRMOT，它将2D RGB图像和3D点云的信息集成到一个实时框架中。同时使用一个联合概率数据关联框架（JPDA）以实现实时的3D MOT。我们在标准KITTI数据集上验证明了框架的有效性，并在所有已发表的在线实时跟踪方法中，在二维跟踪基准中实现了最先进的性能。同时保证了实时运行。</p>
-<p><img src="/images/image-20200531213019876.png" alt=""></p>
-</blockquote>
-<p>[arXiv 2020] Probabilistic 3D Multi-Object Tracking for Autonomous Driving. [<a href="https://arxiv.org/abs/2001.05673">Paper</a>] [<a href="https://github.com/eddyhkchiu/mahalanobis_3d_multi_object_tracking">Code</a>]</p>
-<blockquote>
-<p>本文使用基于KF的常速度模型进行多目标跟踪，在NuScenes数据集上多目标跟踪第一。相比于baseline模型，该方法使用Mahalanobis距离作为关联特征；使用贪心算法进行匹配；状态考虑角速度；建模未知的加速度作为高斯随机变量；利用训练数据集的统计学信息来初始化状态和噪音协方差矩阵。</p>
-</blockquote>
-<p>[arXiv 2020] Fast  Lidar  Clustering  by  Density  and  Connectivity. [<a href="https://arxiv.org/abs/2003.00575">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种用于Lidar点云数据的实时实例分割算法。我们展示了我们的方法如何利用欧几里得距离的特性来保留三维测量信息，同时缩小到二维表示以实现快速计算。我们进一步介绍了我们所谓的跳过连接，以使我们的方法在部分遮挡的情况下，能够很好地避免过分割。通过对公共数据的详细评估，并与已有的方法进行比较，本方法在单个CPU内核上实现了最先进的性能和运行时间。</p>
-</blockquote>
-<p>[arXiv 2020]  A LiDAR-based real-time capable 3D Perception System for Automated Driving in Urban Domains. [<a href="https://arxiv.org/abs/2005.03404">Paper</a>]</p>
-<blockquote>
-<p>本文提出了一种基于LiDAR的、具有实时能力的三维感知系统，用于城市环境的自动驾驶。我们描述了一个可以实时运行的点云处理流水线，包括自适应地面估计、三维聚类和运动分类。多层语义网格图和基于IMM-EKF的对象跟踪以及部分遮挡的显式建模。</p>
-</blockquote>
-<p>[arXiv 2020] 3D Point Cloud Processing and Learning for Autonomous Driving. [<a href="https://arxiv.org/abs/2003.00601">Paper</a>]</p>
-<blockquote>
-<p>无人驾驶中的Lidar点云处理综述。</p>
-</blockquote>
-<p>[arXiv 2020] Lidar for Autonomous Driving: The principles, challenges, and trends for automotive lidar and perception systems. [<a href="https://arxiv.org/abs/2004.08467">Paper</a>]</p>
-<blockquote>
-<p>综述：本文介绍了最先进的汽车LiDAR技术以及与这些技术配套使用的感知算法。</p>
-</blockquote>
+<h5 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h5><ul>
+<li><p>训练<br>随机梯度下降；前150个epoch学习率是0.01，后10个epoch学习率是0.001；batch size是16个点云。</p>
+</li>
+<li><p>数据增强<br>每个ground truth box的随机旋转 + 平移（要有碰撞测试检测是否合理）；对点云全局的旋转 + 尺度缩放。</p>
+</li>
+<li><p>耗时<br>The inference time for the VoxelNet is 225ms where the voxel input feature computation takes 5ms, feature learning net takes 20ms, convolutional middle layers take 170ms and region proposal net takes 30ms on a TitanX GPU and 1.7Ghz CPU.</p>
+</li>
+<li><p>future work<br>Future work includes extending VoxelNet for joint LiDAR and image based end-to-end 3D detection to further improve detection and localization accuracy.</p>
+</li>
+</ul>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -590,6 +449,10 @@
                             
                                 <a href="/tags/Lidar-detection/">
                                     <span class="chip bg-color">Lidar detection</span>
+                                </a>
+                            
+                                <a href="/tags/paper-reading/">
+                                    <span class="chip bg-color">paper reading</span>
                                 </a>
                             
                         </div>
@@ -894,19 +757,19 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/08/27/voxelnet/">
+                <a href="/2020/08/27/pointnet/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="(paper_reading) VoxelNet">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="(paper_reading) PointNet">
                         
-                        <span class="card-title">(paper_reading) VoxelNet</span>
+                        <span class="card-title">(paper_reading) PointNet</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            [2018 CVPR] VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection摘要VoxelNet舍弃手工特征工程，是一个特征提取+bbox预测的单阶段
+                            [2017 CVPR]《PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation》点云只是无序点的集合，因此需要考虑：1、排列不变性（需要有对称
                         
                     </div>
                     <div class="publish-info">
@@ -943,28 +806,26 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/03/01/hdmap-roi/">
+                <a href="/2020/08/27/wen-xian-diao-yan-jin-liang-nian-ji-yu-lidar-de-chuan-tong-jian-ce-fang-fa/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="apollo5.5 中的高精地图ROI过滤">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="文献调研——近两年基于Lidar的传统检测方法">
                         
-                        <span class="card-title">apollo5.5 中的高精地图ROI过滤</span>
+                        <span class="card-title">文献调研——近两年基于Lidar的传统检测方法</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            （本文出发点以及仍未很好解决的问题是如何从hdmap里面获取roi区域，以及在路口处将每个polygon拼合成一个封闭多边形，如下图：）
+                            2018[IROS 2018] LiDAR-Based Object Tracking and Shape Estimation Using Polylines and Free-Space Information. [Paper]
 
-（理想的拼接后情况当是如下图：）
-
-一：大致步骤​        建议先阅读apollo文档，以及本
+大多
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-01
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-27
                             </span>
                         <span class="publish-author">
                             
@@ -977,12 +838,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Apollo/">
-                        <span class="chip bg-color">Apollo</span>
-                    </a>
-                    
-                    <a href="/tags/ROI/">
-                        <span class="chip bg-color">ROI</span>
+                    <a href="/tags/Lidar-detection/">
+                        <span class="chip bg-color">Lidar detection</span>
                     </a>
                     
                 </div>
