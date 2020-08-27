@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vonhop.github.io/"/>
-  <updated>2020-08-27T07:05:17.233Z</updated>
+  <updated>2020-08-27T10:56:02.238Z</updated>
   <id>https://vonhop.github.io/</id>
   
   <author>
@@ -15,6 +15,60 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>(paper_reading) PointNet</title>
+    <link href="https://vonhop.github.io/2020/08/27/paper-reading-1-dian-yun-shen-du-xue-xi-pointnet/"/>
+    <id>https://vonhop.github.io/2020/08/27/paper-reading-1-dian-yun-shen-du-xue-xi-pointnet/</id>
+    <published>2020-08-27T08:11:07.000Z</published>
+    <updated>2020-08-27T10:56:02.238Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h4 id=&quot;2017-CVPR-《PointNet-Deep-Learning-on-Point-Sets-for-3D-Classification-and-Segmentation》&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="Lidar detection" scheme="https://vonhop.github.io/tags/Lidar-detection/"/>
+    
+      <category term="paper reading" scheme="https://vonhop.github.io/tags/paper-reading/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>(paper_reading) VoxelNet</title>
+    <link href="https://vonhop.github.io/2020/08/27/paper-reading-2-dian-yun-shen-du-xue-xi-voxelnet/"/>
+    <id>https://vonhop.github.io/2020/08/27/paper-reading-2-dian-yun-shen-du-xue-xi-voxelnet/</id>
+    <published>2020-08-27T08:11:07.000Z</published>
+    <updated>2020-08-27T10:56:09.981Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h4 id=&quot;2018-CVPR-VoxelNet-End-to-End-Learning-for-Point-Cloud-Based-3D-Object-Detection&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="Lidar detection" scheme="https://vonhop.github.io/tags/Lidar-detection/"/>
+    
+      <category term="paper reading" scheme="https://vonhop.github.io/tags/paper-reading/"/>
+    
+  </entry>
   
   <entry>
     <title>文献调研——近两年基于Lidar的传统检测方法</title>
