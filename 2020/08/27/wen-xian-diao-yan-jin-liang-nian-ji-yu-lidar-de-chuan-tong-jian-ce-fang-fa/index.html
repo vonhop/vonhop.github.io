@@ -4,12 +4,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="apollo5.5 中的高精地图ROI过滤, Just Because">
-    <meta name="description" content="（本文出发点以及仍未很好解决的问题是如何从hdmap里面获取roi区域，以及在路口处将每个polygon拼合成一个封闭多边形，如下图：）
+    <meta name="keywords" content="文献调研——近两年基于Lidar的传统检测方法, Just Because">
+    <meta name="description" content="2018[IROS 2018] LiDAR-Based Object Tracking and Shape Estimation Using Polylines and Free-Space Information. [Paper]
 
-（理想的拼接后情况当是如下图：）
-
-一：大致步骤​        建议先阅读apollo文档，以及本">
+大多">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +15,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>apollo5.5 中的高精地图ROI过滤 | Just Because</title>
+    <title>文献调研——近两年基于Lidar的传统检测方法 | Just Because</title>
     <link rel="icon" type="image/png" href="/medias/featureimages/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -219,13 +217,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        apollo5.5 中的高精地图ROI过滤
+                        文献调研——近两年基于Lidar的传统检测方法
                     </div>
                 </div>
             </div>
@@ -343,12 +341,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Apollo/">
-                                <span class="chip bg-color">Apollo</span>
-                            </a>
-                        
-                            <a href="/tags/ROI/">
-                                <span class="chip bg-color">ROI</span>
+                            <a href="/tags/Lidar-detection/">
+                                <span class="chip bg-color">Lidar detection</span>
                             </a>
                         
                     </div>
@@ -363,21 +357,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-03-01
+                    2020-08-27
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-03-01
+                    2020-08-27
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.4k
+                    4.6k
                 </div>
                 
 
@@ -390,154 +384,179 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>（本文出发点以及仍未很好解决的问题是如何从hdmap里面获取roi区域，以及在路口处将每个polygon拼合成一个封闭多边形，如下图：）</p>
-<p><img src="/images/image-20200301145628900.png" alt=""></p>
-<p>（理想的拼接后情况当是如下图：）</p>
-<p><img src="/images/image-20200301145728763.png" alt=""></p>
-<h2 id="一：大致步骤"><a href="#一：大致步骤" class="headerlink" title="一：大致步骤"></a>一：大致步骤</h2><p>​        建议先阅读<a href="https://github.com/ApolloAuto/apollo/blob/master/docs/specs/3d_obstacle_perception_cn.md">apollo文档</a>，以及本文很大程度上摘抄<a href="https://github.com/YannZyl/Apollo-Note/blob/master/docs/perception/obstacles_lidar_1_hdmap.md">apollo_note</a>，只是针对5.5版本的些许不同以及自身问题出发做的一些总结。</p>
-<p>​        函数入口：\perception\lidar\lib\roi_filter\hdmap_roi_filter\hdmap_roi_filter.cc</p>
-<h3 id="1、数据转换与ROI生成"><a href="#1、数据转换与ROI生成" class="headerlink" title="1、数据转换与ROI生成"></a>1、数据转换与ROI生成</h3><p>​        获得原始的点云数据==&gt;转换成PCL格式，接着需要从点云中检索ROI区域，这些ROI区域包含路面与路口的驾驶区域。路面与路口的驾驶区域需要查询高精地图来完成，该阶段首先使用tf进行坐标系的转换(lidar坐标系到世界坐标系的变换矩阵)，配合velodyne_pose计算得到velodyne_pose_world(lidar在世界坐标系中的坐标)。真正获取ROI使用的是GetROI函数（5.5版本入口里面这个函数没出现，是直接给了roi的多边形集合，而且有road_polygons和junction_polygons两个集合。GetRoi后面会详述）。</p>
-<pre class=" language-C++"><code class="language-C++">hdmap.reset(new HdmapStruct);
-hdmap_input_->GetROI(velodyne_pose_world,FLAGS_map_radius, &hdmap);</code></pre>
-<h3 id="2、坐标变换"><a href="#2、坐标变换" class="headerlink" title="2、坐标变换"></a>2、坐标变换</h3><blockquote>
-<p>Apollo官方文档引用：对于(高精地图ROI)过滤器来说，高精地图数据接口被定义为一系列多边形集合，每个集合由世界坐标系点组成有序点集。高精地图ROI点查询需要点云和多边形处在相同的坐标系，为此，Apollo将输入点云和HDMap多边形变换为来自激光雷达传感器位置的地方坐标系。</p>
-</blockquote>
-<pre class=" language-C++"><code class="language-C++">TransformFrame(frame->cloud, frame->lidar2world_pose, polygons_world_, &polygons_local_, &cloud_local);</code></pre>
-<p>​        坐标变换：将基于lidar坐标系的点云数据、世界坐标系下的polygon，变换成<strong>以lidar为原点的ENU坐标系</strong>。（路口和路面多边形信息只经过平移就可到达新的局部ENU坐标系，可以推测其实世界坐标系也是ENU坐标系，所以两个坐标系之间没有旋转成分；同样lidar坐标系的点云数据变换只需要旋转即可）</p>
-<p>​        对于转换到局部ENU坐标系下的必要性：note里说车辆坐标系或者lidar坐标的方向都参考车头的方向，是没有东南西北这些地理位置信息的，可我要这个位置信息有用吗？</p>
-<p>​        在全局坐标系下确实也可以（毕竟构造ROI LUT的时候只利用polygon的信息，而polygon变化到ENU坐标系只需要平移），不过后面会有相应的其它变换麻烦。</p>
-<h3 id="3、ROI-LUT构造"><a href="#3、ROI-LUT构造" class="headerlink" title="3、ROI LUT构造"></a>3、ROI LUT构造</h3><blockquote>
-<p>Apollo官方文档引用：Apollo采用网格显示查找表（LUT），将ROI量化为俯视图2D网格，以此决定输入点是在ROI之内还是之外。LUT覆盖了一个矩形区域，该区域位于高精地图边界上方，以普通视图周围的预定义空间范围为边界。它代表了与ROI关联网格的每个单元格（如用1/0表示在ROI的内部/外部）。为了计算效率，Apollo使用<strong>扫描线算法</strong>和<strong>位图编码</strong>来构建ROI LUT。</p>
-</blockquote>
-<p>​        <strong>简单地说这个环节的作用就是：将上述转换到局部ENU坐标系下的路面与路口ROI的二维信息映射到一张2D网格图中，网格图中0表示非路口路面区域，1表示路口遇路面区域，最后判断点云cloud中哪些点在路面ROI内(方便做行人，车辆分割)</strong></p>
-<p>先解释一下一些基本信息概念：</p>
-<ol>
-<li>从上面映射到局部ENU坐标系的路口&amp;&amp;路面点云信息，这些点云并不是覆盖所有路口路面区域的，而是路口与路面的凸包，也就是角点。polygons_local里面其实存储了路面与边界线的角点/轮廓信息。cloud_local是所有原始点云映射到ENU局部坐标系过后的信息。</li>
-<li>需要将原先路口与路面等多边形的<strong>角点存储模式(节省内存)转换到填充模式</strong>，用到最常用的算法就是扫描线算法。</li>
-<li>这个填充模式需要用到一个填充的2d网格，网格的大小范围、网格之间的间距(扫描线之间的大小)等信息，由外部文件定义如下，而最后如何2D网格节省存储开销，就用到了bitmap数据结构：</li>
-</ol>
-<p><strong>构建过程：</strong></p>
-<h4 id="1、Get-Major-Direction-as-X-direction"><a href="#1、Get-Major-Direction-as-X-direction" class="headerlink" title="1、Get Major Direction as X direction"></a>1、Get Major Direction as X direction</h4><p>​        求polygons_local的主方向比较简单，只要计算多边形点云集合中，x/东西方向与y/南北方向最大值与最小值的差，差越大跨度越大。选择跨度小的方向作为主方向。（主方向的用处大概是为了加快扫描线算法速度，跨度小扫描线数就少；其实对每个polygon选一个major_dir更好些？不过采用位图编码的话就没办法了）</p>
-<h4 id="2、Convert-polygons-into-roi-grids-in-bitmap"><a href="#2、Convert-polygons-into-roi-grids-in-bitmap" class="headerlink" title="2、Convert polygons into roi grids in bitmap"></a>2、Convert polygons into roi grids in bitmap</h4><blockquote>
-<p>入口是DrawPolygonsMask函数，之后是对每个polygon进行了操作，最后每个polygon都会去填充bitmap，而bitmap赋值的时候一直都是用按位的  |= 的，所以应该是哪怕polygon有重复的区域也是没关系的。</p>
-</blockquote>
+                <h4 id="2018"><a href="#2018" class="headerlink" title="2018"></a>2018</h4><p>[IROS 2018] LiDAR-Based Object Tracking and Shape Estimation Using Polylines and Free-Space Information. [<a href="https://ieeexplore.ieee.org/document/8593385">Paper</a>]</p>
 <blockquote>
-<p>首先Get valid x range</p>
-<p>在bitmap范围和polygon范围里面，选择有效的范围。只关注major_dir方向，两个最小里面选最大/最大里面选最小。将以此范围确定扫描线数。</p>
+<p>大多数跟踪方法使用边界框表示物体的几何形状，然而这在真实场景中有时是不合适的。因此本文提出使用2D折线来表示对象轮廓。同时考虑到对象姿势和形状的相互依赖性，本文的跟踪框架同时估计这两种状态。</p>
 </blockquote>
+<p>[TITS 2018] L-Shape Model Switching-Based Precise Motion Tracking of Moving Vehicles Using Laser Scanners. [<a href="https://ieeexplore.ieee.org/document/8168365">Paper</a>]</p>
 <blockquote>
-<p>扫描线算法Apollo算法里其实给了两种实现方法，分别是ScansCvt和ScanCvt函数。基本思想都是每条扫描线逐次判断，其中前者是利用将每条线段储存成edge，然后利用edge的每次move判断；而后者是对每条扫描线直接遍历所有线段求交点。本文接下来论述第一种方法，matlab代码里给的是第二种方法。</p>
+<p>跟踪过程中为了最小化由外观变化引起的误差，本文提出了一种基于L形模型切换的跟踪算法。</p>
+<p>1、首先从聚类点云中提取出L形特征；2、基于L形的卡尔曼跟踪器，使用运动+形状两个模型，匹配时先校正L形的角点，然后最近邻匹配；3、最后将L形转换到包围框形式。</p>
 </blockquote>
+<p>[TITS 2018] Road-Segmentation-Based Curb Detection Method for Self-Driving via a 3D-LiDAR Sensor. [<a href="https://ieeexplore.ieee.org/abstract/document/8291612">Paper</a>]</p>
 <blockquote>
-<p>说明：对于每个多边形polygon，其里面存储的<strong>物体的轮廓点是有序的排列的</strong>，所以每两个相邻的点可以构建一条边，最后得到一个封闭的轮廓。</p>
+<p>本文基于3D Lidar数据，提出了一种实时的路边检测方法。首先使用基于线性平面拟合方法粗略分割地面，然后使用Sliding-Beam方法再次分割地面，最后采用路缘检测方法来获得每个路段的路缘位置。在同济大学VeCaN实验室自动驾驶汽车获得的数据集上测试了该方法。每帧的平均处理时间仅为12毫秒左右。</p>
 </blockquote>
-<p><strong>扫描线算法大致步骤：</strong></p>
-<p>1、DisturbPolygon 函数首先将polygon里面的坐标，过于靠近网格线(坐标差值在epsion以内)的点稍微推离网格线。</p>
-<p>原因便于步骤3中处理网格线附近的边，经过推离以后，网格线附近的边要么是不穿过网格线，要么就明显的横穿网络，减少那种差一点就横穿网格线的边，降低判断逻辑。</p>
-<p>2、ConvertPolygonToSegments函数将多边形相邻的两个点保存出他们的边segment_，同时计算得到这条边的斜率slope。</p>
-<p>5.5代码里没有在此处对segment里面每个元素两个点存储的顺序要求其依赖其主方向上的坐标值，即永远是后面一个点的坐标比前面一个点的坐标大（不过后来处理的时候还是加了的，这是用第一种方法必须的）。</p>
-<p>​        另外，代码里引入了singular 属性，表示两种特殊情况，分别为斜率为inf以及通过扫描线只有奇数个交点这两种情况。而且singular属性只会在第二种方法中用到，同时，第二种方法不应该对segmen里元素排序。</p>
-<p>3、根据主方向上的valid_range(最大坐标和最小坐标差值)，以及网格线间距grid_size，确定扫描线数，然后根据segment里面的两个点计算每条边跟其后面的网格线的第一个交点E，最后转成edge结构，照扫描线编号存到et里面。</p>
-<p>​        例外的两种情况分别是第一个交点落在valid_range的两侧，其中将落在左侧的再次判别是否其再往后的交点可以到达第一条扫描线，若可，正常加入et；而落在右侧的部分则直接将其反方向的边界存入top_segment（这里存疑的是我认为只需要根据valid_range的最大值设置一条截线，然后取相交点就可，而代码里则是将右侧所有segment的miny和maxy都存了起来）。</p>
-<p>4、根据et，从扫描线id为0开始构建aet，与每根扫描线相交的必有偶数个点（这是因为前面一个对valid_range声称数据稳定性的处理，另一个则是1所说的DisturbPolygon，这也是另外一个方法没做这些处理所以要借助singular属性的原因）。</p>
-<p>​        另外，正因为segment里面是排好序的，则步进方向应该都是向右推进；所以参考[1]apollo-note里箭头方向（下图）画的就很有误导…</p>
-<p><img src="/images/image-20200301150316121.png" alt=""></p>
-<h4 id="3、Draw-grids-in-bitmap-based-on-scan-intervals"><a href="#3、Draw-grids-in-bitmap-based-on-scan-intervals" class="headerlink" title="3、Draw grids in bitmap based on scan intervals"></a>3、Draw grids in bitmap based on scan intervals</h4><p>​        bitmap的数据格式：std::vector<uint64_t> bitmap </uint64_t></p>
-<p>​        到最后就是根据上面扫描线算法得到的一系列interval，然后对bitmap赋值了（涉及位运算还是有些迷的…）。其是对列cols除以2^6(64)，因为一个unsigned64有64位，每一位bit存储一个网格0/1值，起到节省开销作用。所以bitmap的大小如果是mxn，那么他可以存储mx64n网格大小的数据。</p>
-<p>​        另外这里用到了超参extend_dist，是在每个interval的miny和maxy两头各扩展了一个extend_dist。</p>
-<h3 id="4、对每个点检查bitmap，获得roi索引"><a href="#4、对每个点检查bitmap，获得roi索引" class="headerlink" title="4、对每个点检查bitmap，获得roi索引"></a>4、对每个点检查bitmap，获得roi索引</h3><p>​        最后针对每个基于ENU局部坐标系的点云cloud，根据其x和y去bitmap里面做check，第一check该点是否落在这个网格里面(x:[-range,range], y:[-range,range])，这个检查由isExist函数完成；第二个check，如果该点在LUT网格内，那么check这个点是否在路面ROI内，只要检查其对应的网格坐标去bitmap查询即可，1表示在路面；0表示在路面外，这个检查由Check函数完成。</p>
-<h2 id="二：额外记录"><a href="#二：额外记录" class="headerlink" title="二：额外记录"></a>二：额外记录</h2><h5 id="看的过程中一直在想开头所说那个拼接的问题，不过确定hdmap那边给的polygon之间会有空隙吗？能不能直接让hdmap那边给我们roi的时候让各区域冗余一些，从而没有空隙（这就不归我们管了，笑）。"><a href="#看的过程中一直在想开头所说那个拼接的问题，不过确定hdmap那边给的polygon之间会有空隙吗？能不能直接让hdmap那边给我们roi的时候让各区域冗余一些，从而没有空隙（这就不归我们管了，笑）。" class="headerlink" title="看的过程中一直在想开头所说那个拼接的问题，不过确定hdmap那边给的polygon之间会有空隙吗？能不能直接让hdmap那边给我们roi的时候让各区域冗余一些，从而没有空隙（这就不归我们管了，笑）。"></a>看的过程中一直在想开头所说那个拼接的问题，不过确定hdmap那边给的polygon之间会有空隙吗？能不能直接让hdmap那边给我们roi的时候让各区域冗余一些，从而没有空隙（这就不归我们管了，笑）。</h5><p>1、base::PointFCloudPool::Instance().Get()</p>
-<p>代码里有这样用一个固定数量的池，然后实例化的操作欸。</p>
-<p>2、Eigen::Affine3d  T 是一个4*4齐次矩阵变换。</p>
-<p>3、polygon的数据结构：typedef PointCloud<pointd> PolygonDType</pointd></p>
-<p>4、google glog之CHECK_*含义</p>
-<p>#define CHECK_EQ(x,y) CHECK_OP(x,y,EQ,==)<br>#define CHECK_NE(x,y) CHECK_OP(x,y,NE,!=)<br>#define CHECK_LE(x,y) CHECK_OP(x,y,LE,&lt;=)<br>#define CHECK_LT(x,y) CHECK_OP(x,y,LT,&lt;)<br>#define CHECK_GE(x,y) CHECK_OP(x,y,GE,&gt;=)<br>#define CHECK_GT(x,y) CHECK_OP(x,y,GT,&gt;)</p>
-<p>5、（uint64_t）-1保证产生0xffffffffffffffff</p>
-<p>6、static_cast<int>对应的是下取整。</int></p>
-<h2 id="三：hdmap"><a href="#三：hdmap" class="headerlink" title="三：hdmap"></a>三：hdmap</h2><p><strong>问题：roihdmap怎么得到的？就是那些polygons</strong></p>
-<h3 id="1、apollo中hdmap格式："><a href="#1、apollo中hdmap格式：" class="headerlink" title="1、apollo中hdmap格式："></a>1、apollo中hdmap格式：</h3><p>（下面每种元素的详细定义都在相应的proto文件里，map文件夹里也有解析的函数）</p>
-<pre class=" language-C++"><code class="language-C++">message Map {
-  optional Header header = 1;        //上面所说的地图基本信息
-
-  repeated Crosswalk crosswalk = 2;  //人行横道
-  repeated Junction junction = 3;    //交叉路口
-  repeated Lane lane = 4;           //车道
-  repeated StopSign stop_sign = 5;  //停车标志
-  repeated Signal signal = 6;       //信号灯
-  repeated YieldSign yield = 7;     //让车标志
-  repeated Overlap overlap = 8;     //重叠区域
-  repeated ClearArea clear_area = 9;  //禁止停车区域
-  repeated SpeedBump speed_bump = 10;  //减速带
-  repeated Road road = 11;             //道路
-  repeated ParkingSpace parking_space = 12; //停车区域
-  repeated Sidewalk sidewalk = 13;  //路边的小路，或者行人走的路，现在的版本已经去掉？但是其他模块有些还有sidewalk
-}</code></pre>
-<p>​        overlap在注释里的解释是“任何一对在地图上重合的东西，包括（车道，路口，人行横道）”，比如路口的人行横道和道路是重叠的，还有一些交通标志和道路也是重叠的，这是创造的一个逻辑概念。</p>
-<h3 id="2、map里获得hdmap-roi的函数"><a href="#2、map里获得hdmap-roi的函数" class="headerlink" title="2、map里获得hdmap_roi的函数"></a>2、map里获得hdmap_roi的函数</h3><blockquote>
-<p>modules\map\hdmap\hdmap_impl.cc</p>
-</blockquote>
-<pre class=" language-C++"><code class="language-C++">int HDMapImpl::GetRoi(const apollo::common::PointENU& point, double radius, std::vector<RoadRoiPtr>* roads_roi, std::vector<PolygonRoiPtr>* polygons_roi)</code></pre>
-<p>还有一个类似的函数:</p>
-<pre class=" language-C++"><code class="language-C++">int HDMap::GetRoadBoundaries(const apollo::common::PointENU& point, double radius, std::vector<RoadROIBoundaryPtr>* road_boundaries, std::vector<JunctionBoundaryPtr>* junctions)</code></pre>
-<p>（觉得跟上面那个差不多，不过上面那个多了个停车场？）</p>
-<h3 id="3、perception里调用上述函数的入口"><a href="#3、perception里调用上述函数的入口" class="headerlink" title="3、perception里调用上述函数的入口"></a>3、perception里调用上述函数的入口</h3><blockquote>
-<p>在modules\perception\map\hdmap\hdmap_input.cc里面用的是GetRoadBoundaries。</p>
-</blockquote>
-<pre class=" language-C++"><code class="language-C++">bool HDMapInput::GetRoiHDMapStruct(const base::PointD& pointd, const double distance,std::shared_ptr<base::HdmapStruct> hdmap_struct_ptr)</code></pre>
-<p>3.1：先用GetRoadBoundaries从hdmap里面获取中心点周围的boundary和junction。</p>
-<p>3.2：然后用MergeBoundaryJunction将上面得到的（hdmap里面的格式），转成 这三个：</p>
-<p>hdmap_struct_ptr-&gt;junction_polygons;    std::vector<roadboundary> road_boundaries;    hdmap_struct_ptr-&gt;road_polygons;</roadboundary></p>
-<p>3.3：最后用GetRoadBoundaryFilteredByJunctions函数（Filter road boundary by junction）</p>
-<p>（不过只是过滤hdmap_struct_ptr-&gt;road_boundary，我们hdmap实际用的是hdmap_struct_ptr-&gt;road_polygons。但是里面SplitBoundary函数好像表明road完全覆盖了junction啊，所以split boundary的时候是隔着junction划分成了好几个boundary。）</p>
-<p>另：</p>
+<p>[ICRA 2018] Realtime Vehicle and Pedestrian Tracking for Didi Udacity Self-Driving Car Challenge. [<a href="https://ieeexplore.ieee.org/document/8460913">Paper</a>]</p>
 <blockquote>
-<p>modules\perception\lidar\lib\roi_filter\roi_service_filter\roi_service_filter_test.cc    里面这句应该也表明了就是从上面说的函数得到的hdmap_struct<code>CHECK(map::HDMapInput::Instance()&gt;GetRoiHDMapStruct(point, 120.0,frame-&gt;hdmap_struct));</code></p>
+<p>融合来自各种传感器（相机，LIDAR，雷达，IMU）的数据 + EKF，进行行人和车辆跟踪。</p>
 </blockquote>
+<p>[IV 2018] Generic Vehicle Tracking Framework Capable of Handling Occlusions Based on Modified Mixture Particle Filter. [<a href="https://arxiv.org/abs/1809.10237">Paper</a>]</p>
 <blockquote>
-<p>以及modules\perception\lidar\lib\segmentation\cnnseg\cnn_segmentation.cc里面也有roi_filter的过程</p>
+<p>本文提出了一种基于改进的混合粒子滤波器的通用车辆跟踪框架，每个对象由粒子假设近似，无需明确的数据关联。同时在预测时纳入基于学习的行为模型，而不是纯车辆运动模型。</p>
 </blockquote>
-<h3 id="4、高精地图中的Section、Lane、Junction、road等概念（各处只言片语，自行判断）："><a href="#4、高精地图中的Section、Lane、Junction、road等概念（各处只言片语，自行判断）：" class="headerlink" title="4、高精地图中的Section、Lane、Junction、road等概念（各处只言片语，自行判断）："></a>4、高精地图中的Section、Lane、Junction、road等概念（各处只言片语，自行判断）：</h3><p><img src="/images/image-20200227140638797.png" alt=""></p>
-<p><img src="/images/image-20200227140705635.png" alt=""></p>
-<p>​        无论车道线变少或变多，都是从中间的灰线切分。切分之后的地图分为Section A、Section B和Section C三部分。一条道路可以被切分为很多个Section。按照道路车道数量变化、道路实线和虚线的变化、道路属性的变化的原则来对道路进行切分。</p>
-<p>​        在Lane概念中，Reference Line在OpenDRIVE规范中非常重要。基于Reference Line，向左表示ID向左递增，向右表示ID向右递减，它是格式规范的标准之一，同时也是固定的、不可更改的。比如，Reference Line的ID为0，向左是1、2、3，向右是−1、−2、−3。</p>
-<p>​        Junction是OpenDRIVE格式规范中的路口概念。Junction中包含虚拟路，虚拟路用来连接可通行方向，用红色虚线来表示。在一张地图中，在遇到对路口的表述时，虽然说路口没有线，但我们要用虚拟线来连接道路的可通行方向连，以便无人驾驶车辆明确行进路线。</p>
-<p>​        <strong>交叉口在OpenDRIVE中并没有形状和实体</strong>，只是表示道路和道路间的连接关系，具体的表述方式如下图</p>
-<p><img src="/images/v2-fb13aa42407df95beb13efb76b8e46d2_r.jpg" alt=""></p>
-<p><img src="/images/image-20200227142447797.png" alt=""></p>
-<p>​        如下图所示，Lane和Junction在空间上有重叠，它们之间就会有Overlap。</p>
-<p>​        <strong>这里是说lane和junction有重叠；而不是road和junction</strong></p>
-<p><img src="/images/image-20200227142637309.png" alt=""></p>
-<p><img src="/images/image-20200227142719596.png" alt=""></p>
-<p>​        上图给出了Apollo的车道模型及其相关描述元素。它与openDRIVE大致的规则是一样的，把纵向切成Section，横向还是使用Lane分割。</p>
-<p>​        路口表述：路口分为真实路口和十字路口。在实践过程中，发现除了真实路口之外，在车道数变化的时候，比如从两车道变到三车道，<strong>需要感知周围有没有车辆</strong>，在Apollo高精地图里面也把这种情况处理成一个路口。这也是In road和Cross road的区别。</p>
-<p><img src="/images/image-20200227142828847.png" alt=""></p>
-<h5 id="附：相关几个issue"><a href="#附：相关几个issue" class="headerlink" title="附：相关几个issue"></a>附：相关几个issue</h5><h6 id="The-difference-between-pnc-junction-and-junction-10260"><a href="#The-difference-between-pnc-junction-and-junction-10260" class="headerlink" title="The difference between pnc-junction and junction #10260"></a>The difference between pnc-junction and junction #10260</h6><ul>
-<li><strong>junction</strong> is a <strong>rough</strong> area around a junction/intersection. We mainly use it for perception ROI.</li>
-<li><strong>pnc-junction</strong> is the junction concept specifically for Planning module. It uses the stop lines of traffic signs(traffic light, stop sign, crosswalk, and etc) as the boundary of the junction. The boundaries are used for decisions and planning in Planning module and must comply with traffic rules.</li>
-</ul>
-<h6 id="Current-Lane-of-the-Ego-vehicle-6710"><a href="#Current-Lane-of-the-Ego-vehicle-6710" class="headerlink" title="Current Lane of the Ego vehicle #6710"></a>Current Lane of the Ego vehicle #6710</h6><p>​        If you want to get the lane(s) by point, the map may return your multiple lanes since some lanes are overlapped (especially around junctions and turns). This is as expected.<br>​        The lane by point is only unique if you talk about the lanes along the routing. There are some methods inside ReferenceLine class to get it.<a href="https://github.com/ApolloAuto/apollo/blob/master/modules/planning/reference_line/reference_line.h">https://github.com/ApolloAuto/apollo/blob/master/modules/planning/reference_line/reference_line.h</a></p>
-<h5 id="闲思："><a href="#闲思：" class="headerlink" title="闲思："></a>闲思：</h5><p>1、我getroad时得到的就是一整段路吗？还是一个路除了其本身有section外，在很外部又有划分呢？</p>
-<p>​    提出这个问题是因为，为什么我getroi的时候，getroad之后先检查road-&gt;has_junction_id 如果有的话，就直接存junction的区域了；没有的话才会去存road的boundary。它似乎根本没去按范围检索周围的junction…总之，地图格式因为没实际数据来源还是很迷的…</p>
-<p>2、之前好像没考虑过roi过滤为什么不直接判断point在polygon内这样？（笑）</p>
-<p>3、最后暂且拼合的方法就是，如果可以的话选每个polygon左右boundary里面最接近junction中心的点，这样每条路得到两个角点；然后需要按照相应的角度顺序排列；最后再次送扫描线算法。（针对我特定的一个样例也只能这种程度，而实际道路又复杂多变…）</p>
-<p><img src="/images/image-20200301145912611.png" alt=""></p>
-<h6 id="4、matlab"><a href="#4、matlab" class="headerlink" title="4、matlab"></a>4、matlab</h6><pre class=" language-matlab"><code class="language-matlab">补全：tab键
-其余操作技巧：
-Tab 右移整体代码
-Shift<span class="token operator">+</span>Tab 左移整体代码
-Ctrl<span class="token operator">+</span>R 注释掉整体代码
-Ctrl<span class="token operator">+</span>T 上面的反操作 去掉整体代码前的%
-F1显示帮助信息
-Ctrl<span class="token operator">+</span>F1显示函数概要信息
-Shift<span class="token operator">+</span>F1打开函数浏览器
-Ctrl<span class="token operator">+</span>I 自动缩排代码格式
-Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></pre>
-<h6 id="主要参考："><a href="#主要参考：" class="headerlink" title="主要参考："></a>主要参考：</h6><p>[1]：Apollo-Note <a href="https://github.com/YannZyl/Apollo-Note/blob/master/docs/perception/obstacles_lidar_1_hdmap.md">https://github.com/YannZyl/Apollo-Note/blob/master/docs/perception/obstacles_lidar_1_hdmap.md</a></p>
-<p>[2]：Dig-into-Apollo <a href="https://github.com/daohu527/Dig-into-Apollo/tree/master/map">https://github.com/daohu527/Dig-into-Apollo/tree/master/map</a></p>
-<p>[3]：OpenDRIVE <a href="http://www.opendrive.org/index.html">http://www.opendrive.org/index.html</a></p>
-<p>[4]：apollo文档 <a href="https://github.com/ApolloAuto/apollo/blob/master/docs/specs/3d_obstacle_perception_cn.md">https://github.com/ApolloAuto/apollo/blob/master/docs/specs/3d_obstacle_perception_cn.md</a></p>
-<p>[5]：数据 <a href="https://github.com/ApolloAuto/apollo/issues/5759">https://github.com/ApolloAuto/apollo/issues/5759</a></p>
-<p>[6]：扫描线算法 <a href="https://www.jianshu.com/p/d9be99077c2b">https://www.jianshu.com/p/d9be99077c2b</a></p>
+<p>[IV 2018] A Reliable Road Segmentation and Edge Extraction for Sparse 3D Lidar Data. [<a href="https://ieeexplore.ieee.org/document/8500486">Paper</a>]</p>
+<blockquote>
+<p>针对稀疏点云的地面分割问题，本文通过融合多帧点云得到密集数据来进行地面分割。</p>
+<p><img src="/images/image-20200531172425020.png" alt=""></p>
+</blockquote>
+<p>[IV 2018] Fast Multi-Pass 3D Point Segmentation Based on a Structured Mesh Graph for Ground Vehicles. [<a href="https://ieeexplore.ieee.org/document/8500552/?denied=">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种基于网格图的快速多通道的Velodyne Lidar点云实时分割算法。该算法利用Velodyne传感器的固有传感器模式作为先验，创建一个结构化的网状图。</p>
+</blockquote>
+<p>[IV 2018] An Orientation Corrected Bounding Box Fit Based on the Convex Hull under Real Time Constraints. [<a href="https://ieeexplore.ieee.org/document/8500692">Paper</a>]</p>
+<blockquote>
+<p>首先使用基于凸包的最小包围矩形构建包围框，然后使用特征直线的方法对包围框进行朝向角校正。</p>
+</blockquote>
+<p>[ITSC 2018] A Slope-robust Cascaded Ground Segmentation in 3D Point Cloud for Autonomous Vehicles. [<a href="https://ieeexplore.ieee.org/document/8569534">Paper</a>]</p>
+<blockquote>
+<p>本文主要针对具有挑战性的地形的地面分割，提出了一种基于Lidar的斜坡鲁棒级联地面分割方法。包括两个主要步骤：首先使用传感器的几何形状以及扫描中连续环之间的距离过滤大部分非地面点；然后使用多区域RANSAC平面拟合将扫描中的其余非地面点与地面点分开。</p>
+<p><img src="/images/image-20200530110149347.png" alt=""></p>
+</blockquote>
+<p>[ITSC 2018] 3D Ground Point Classification for Automotive Scenarios.[<a href="https://ieeexplore.ieee.org/document/8569898">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种依赖点云几何特征（法向量）的地面点分割算法。我们提出了一种基于各点邻居距离的倒数的加权法向量估计，该度量考虑到了汽车应用中LiDAR传感器向下倾斜的安装位置。</p>
+</blockquote>
+<p>[ITSC 2018] Multi-Object Tracking with Interacting Vehicles and Road Map Information.[<a href="https://ieeexplore.ieee.org/document/8569701">Paper</a>]</p>
+<blockquote>
+<p>目前大多数的多物体跟踪算法都假设物体独立运动。然而在真实交通情况下，物体之间会相互影响，而且由于可驾驶区域的限制，物体独立运动的假设并不能实现。本文提出了一种适应多物体跟踪系统的方法，来模拟车辆之间的相互作用，以及当前的道路几何形状。本文扩展了滤波器的预测步骤，以方便利用智能驾驶模型对物体之间的交互作用进行建模。此外，为了考虑道路地图信息，采用了高精道路地图的近似值。</p>
+</blockquote>
+<p>[ITSC 2018]  Fast Dual Decomposition based Mesh-Graph Clustering for Point Clouds. [<a href="https://ieeexplore.ieee.org/document/8569999">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种快速、高效的算法来聚类LiDAR产生的三维点云。该聚类算法基于图理论和局部上下文信息，采用基于传感器固有光束模式的感知定律对图边进行权重编码。同时为了提高速度，将聚类管道分为垂直聚类和水平聚类。因此，本文将图形分割成多个垂直和水平线图，并联处理。最后，利用广度优先搜索算法将分割后的结果合并成相干对象。</p>
+</blockquote>
+<p>[ICVES 2018] An Adaptive 3D Grid-Based Clustering Algorithm for Automotive High Resolution Radar Sensor. [<a href="https://ieeexplore.ieee.org/document/8519483">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种基于雷达点云和range/angel/velocity网格的自适应聚类方法。改进的基于3D栅格的DBSCAN算法，聚类时考虑点之间的range、angel和velocity的相似性，同时使用滑动窗口而不是传统的欧几里得距离来加速聚类。为了消除参数依赖性和由于实际雷达测量的不确定性而导致的不正确聚类，该方法根据跟踪和估计的物体轮廓，扩展了基于模型的聚类窗口。</p>
+</blockquote>
+<p>[arXiv 2018] The Greedy Dirichlet Process Filter - An Online Clustering Multi-Target Tracker. [<a href="https://arxiv.org/abs/1811.05911">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种新型的多目标跟踪器：Greedy Dirichlet Process Filter (GDPF)，它基于非参数贝叶斯模型Dirichlet Processes和快速后置计算算法Sequential Updating and Greedy Search (SUGS)，并提出了一种新型的多目标跟踪器。通过添加时间依赖性，得到了一个实时的跟踪框架，而不需要之前的聚类或数据关联步骤。</p>
+</blockquote>
+<h3 id="2019"><a href="#2019" class="headerlink" title="2019"></a>2019</h3><p>[IROS 2019] PASS3D: Precise and Accelerated Semantic Segmentation for 3D Point Cloud. [<a href="https://arxiv.org/abs/1909.01643">Paper</a>]</p>
+<blockquote>
+<p>本文使用PASS3D框架来实现3D点云的逐点语义分割。该框架结合传统方法与深度学习方法，包括两个阶段：候选聚类加速阶段与逐点语义预测阶段。相比于基于图像的语义分割，3D场景的对象天然都是相互分离的，不重叠的，因此我们首先使用传统方法加速生成候选聚类，主要分成三步：基于迭代多平面线性拟合方法去地面；聚类依据Lidar特点，使用 ring-based的方法；候选精炼阶段，由于去地面时把障碍物的一部分也归为了地面，比如部分车轮等，因此需要扩充。第二阶段基于神经网络对这些候选聚类进一步处理，以估计每个点的语义标签。最后在KITTI数据集评估。</p>
+<p><img src="/images/image-20200531140121274.png" alt=""></p>
+</blockquote>
+<p>[IROS 2019] On Enhancing Ground Surface Detection from Sparse Lidar Point. [<a href="https://ieeexplore.ieee.org/document/8968135">Paper</a>]</p>
+<blockquote>
+<p>本文针对低分辨率Lidar产生的稀疏点云，提出了一种地面分割方法。本文方法基于平面拟合的RANSAC方法，主要改进：1、通过逐点(曲线)切线加强内点确认；2、不相交的多平面拟合。</p>
+</blockquote>
+<p>[IROS 2019] Normal Distribution Mixture Matching based Model Free Object Tracking Using 2D LIDAR. [<a href="https://ieeexplore.ieee.org/document/8967876">Paper</a>]</p>
+<blockquote>
+<p>对于2D Lidar的多目标跟踪，本文使用基于正态混合分布的匹配方法，构建了一套无模型的目标跟踪算法。其中每个对象被建模成一个正态混合分布＋一个速度向量，这使得基于正态分布变换 （NDT） 算法能够准确估计对象的运动。同时在检测阶段使用基于极坐标栅格的连接组件分割方法。</p>
+<p><img src="/images/image-20200531141958162.png" alt=""></p>
+</blockquote>
+<p>[TITS 2019] Dynamic Vehicle Detection With Sparse Point Clouds Based on PE-CPD. [<a href="https://ieeexplore.ieee.org/document/8467531">Paper</a>]</p>
+<blockquote>
+<p>由于点云稀疏，检测距离激光雷达较远的车辆是一个巨大的挑战。 针对这一问题，本文提出了一种基于似然场模型＋相干点漂移（CPD）的动态车辆检测方法，该方法包括动态目标检测和动态车辆确认的步骤。 基于距离和网格角分辨率的自适应阈值可用于检测动态对象。 提出了基于CPD（PE-CPD）的姿态估计来估计车辆姿态。 标定级数算法与PE-CPD改进的贝叶斯滤波器相结合，可用于更新车辆状态。</p>
+</blockquote>
+<p>[IV 2019] Detection-by-Tracking Boosted Online 3D Multi-Object Tracking. [<a href="https://ieeexplore.ieee.org/abstract/document/8813856/">Paper</a>]</p>
+<blockquote>
+<p>本文建立了一个基于贝叶斯模型的，整合二维和三维特征的基于Lidar的多目标跟踪系统。此外，本文使用detection-by-tracking方法，在遮挡和丢失障碍物时可以基于跟踪结果得到准确的包围框。</p>
+</blockquote>
+<p>[IV 2019] Efficient Multi-Sensor Extended Target Tracking using GM-PHD Filter. [<a href="https://ieeexplore.ieee.org/document/8814257">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一个有效的多传感器（Radar、Stereo camera、Lidar）融合算法用来进行检测和跟踪。主要步骤：1）首先使用传统的聚类和标记方法从每个传感器中生成与感兴趣的目标相对应的合理一致的特征，2）围绕已确定的感兴趣的目标生成边界框，3）然后将每个传感器的边界框参数（测量值）送入在随机有限集（RFS）框架下开发的新型多传感器目标跟踪算法中。</p>
+</blockquote>
+<p>[IV 2019] Utilizing LiDAR Intensity in Object Tracking. [<a href="https://ieeexplore.ieee.org/document/8814079">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种新的方法来从LiDAR反射强度中提取特征，以改善目标跟踪效果。</p>
+</blockquote>
+<p>[IV 2019] An Online Multi-lidar Dynamic Occupancy Mapping Method. [<a href="https://ieeexplore.ieee.org/document/8814006/">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种新的基于相位一致性原理的动态占有地图（DOM）构建方法，此外，我们的框架还提供了一些常见的挑战的解决方案，如多激光雷达融合和地面估计。</p>
+</blockquote>
+<p>[ITSC 2019] LATTE: Accelerating LiDAR Point Cloud Annotation via Sensor Fusion, One-Click Annotation, and Tracking.[<a href="https://arxiv.org/abs/1904.09085">Paper</a>] [<a href="https://github.com/bernwang/LATTE">Code</a>]</p>
+<blockquote>
+<p>Lidar点云注释工具</p>
+<p>1）传感器融合：利用基于图像的检测算法来自动对已校准的图像进行预标记，然后将标记传输到点云。 </p>
+<p>2）一键注释：无需绘制3D边界框或逐点标签，而是将注释简化为只需单击目标对象即可自动为目标生成边界框。</p>
+<p> 3）跟踪：将跟踪集成到序列注释中，这样就可以将标签从一帧转移到后续帧，从而显着减少重复标记。</p>
+<p>（该工具中去地面用的是多平面线性拟合，聚类是DBSCAN，跟踪是卡尔曼滤波）</p>
+</blockquote>
+<p>[ITSC 2019] A Multi-Stage Clustering Framework for Automotive Radar Data. [<a href="https://arxiv.org/abs/1907.03511">Paper</a>]</p>
+<blockquote>
+<p>本文描述了一种聚类Radar数据的新方法，分为三步：1、过滤静态背景数据；2、点云聚类；3、聚类融合。同时进行了聚类算法的参数优化，如自适应参数的DBSCAN。</p>
+</blockquote>
+<p>[ICVES 2019] A Novel Method of Traversable Area Extraction Fused With LiDAR Odometry in Off-road Environment. [<a href="https://ieeexplore.ieee.org/abstract/document/8906333">Paper</a>]</p>
+<blockquote>
+<p>越野环境与城市地区相比，不仅有凸的障碍物，还有凹的障碍物和悬崖峭壁等。本文介绍了一种越野环境中基于多类障碍物探测的可穿越区域提取方法，以及基于LiDAR测距结果的可穿越区域提取方法。融合三个激光雷达；根据贝叶斯理论将历史可穿越区域与当前结果混合在一起。</p>
+</blockquote>
+<p>[IEEE Access] Ground Surface Filtering of 3D Point Clouds Based on Hybrid Regression Technique. [<a href="https://ieeexplore.ieee.org/document/8642822">Paper</a>]</p>
+<blockquote>
+<p>本文将高斯过程回归（GPR）与鲁棒性局部加权回归（RLWR）相结合，将投射在极坐标栅格图上的点云分为径向滤波和周向滤波两部分，可以消除离群值的影响，对地表进行鲁棒性建模。首先，应用RLWR结合梯度滤波，对径向方向的采样点进行拟合，排除离群点，得到拟合地表线。所有的径向拟合线构成了整个平面的种子骨架。然后，根据骨架的同圆周向的种子线，应用GPR构建地平面模型。</p>
+<p><img src="/images/image-20200531205204449.png" alt=""></p>
+</blockquote>
+<p>[arXiv 2019] A Baseline for 3D Multi-Object Tracking. [<a href="https://arxiv.org/abs/1907.03961">Paper</a>] [<a href="https://github.com/xinshuoweng/AB3DMOT">Code</a>]</p>
+<blockquote>
+<p>使用3D卡尔曼滤波和匈牙利算法构建基于Lidar的多目标跟踪框架。使用3D IOU作为关联特征，并提出新的评估标准sAMOTA。</p>
+</blockquote>
+<p>[arXiv 2019] Online Multi-Target Tracking for Maneuvering Vehicles in Dynamic Road Context. [<a href="https://arxiv.org/abs/1912.00603">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种在线多目标跟踪(MOT)框架，使用卡尔曼滤波方法；交互多模型(IMM)方法；匈牙利匹配。同时道路上下文信息被集成到IMM的时间变化概率矩阵(TPM)中进行调整，以根据路段和交通标志/信号来调节机动性。</p>
+<p><img src="/images/image-20200531210301366.png" alt=""></p>
+</blockquote>
+<p>[arXiv 2019] Low-cost LIDAR based Vehicle Pose Estimation and Tracking. [<a href="https://arxiv.org/abs/1910.01701">Paper</a>]</p>
+<blockquote>
+<p>基于本文之前优化的L-Shape拟合算法，在这里提出了一种基于数据驱动和模型的方法，用于车辆的鲁棒性分割和跟踪。新方法利用T-linkage RANSAC来对移动中的汽车进行鲁棒性分割。此外，在分割结果的基础上建立了一个具有多模型关联（MMA）的车辆跟踪系统</p>
+</blockquote>
+<h3 id="2020"><a href="#2020" class="headerlink" title="2020"></a>2020</h3><p>[TITS 2020] Online Multiple Maneuvering Vehicle Tracking System Based on Multi-Model Smooth Variable Structure Filter. [<a href="https://ieeexplore.ieee.org/document/8658194">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种新的基于LiDAR的在线多车辆跟踪框架，使用一种新的在线多模型平滑变结构滤波器（MMSVSF）来解决跟踪不稳定问题。各个子模块并行运行，可以减少建模不确定的影响的同时保证实时性。</p>
+</blockquote>
+<p>[TITS 2020] Multi-Target State Estimation Using Interactive Kalman Filter for Multi-Vehicle Tracking. [<a href="https://ieeexplore.ieee.org/document/8700616">Paper</a>]</p>
+<blockquote>
+<p>本文提出使用交互式卡尔曼滤波器（IKF）来演示目标之间的交互作用，以了解目标对象的行为如何受到其邻居行为的影响。在此方法中，将构建IKF节点网络，以使每个节点与每个目标相关联。节点之间存在边，表示相应的目标对其相互影响。最佳IKF增益的计算以及对MOTP，MOTA和MSE度量的评估说明了所提出的滤波器在车辆跟踪中的有效性。</p>
+</blockquote>
+<p>[TITS 2020] A Probability Occupancy Grid Based Approach for Real-Time LiDAR Ground Segmentation. [<a href="https://ieeexplore.ieee.org/document/8666170">Paper</a>]</p>
+<blockquote>
+<p>为了解决地面分割中存在的过/欠分割以及分割缓慢的问题，本文使用基于概率占有栅格的实时地面分割方法。首先建立极坐标栅格，然后基于历史观测为每个栅格指定其为地面/非地面的概率。然后使用上述标记为地面点的栅格进行加权线性回归，得到地面斜率。</p>
+<p><img src="/images/image-20200531162306737.png" alt=""></p>
+</blockquote>
+<p>[ICRA 2020] Learning  to  Optimally  Segment  Point  Clouds. [<a href="https://ieeexplore.ieee.org/abstract/document/8954778">Paper</a>] [<a href="https://github.com/peiyunh/opcseg">Code</a>]</p>
+<blockquote>
+<p>我们专注于LiDAR点云的类识别实例分割问题。我们提出了一种将图理论搜索与数据驱动学习相结合的方法：它在一组候选分割中进行搜索，并根据基于数据驱动的”objectness”的点模型返回一个单独的得分较好的分割。为了进行评估，我们将KITTI 3D检测作为分割基准，并通过实证证明，我们的算法在分割点云上的表现明显优于以往基于对象的自下而上和自上而下的分割算法。</p>
+</blockquote>
+<p>[ICRA 2020] A*3D Dataset: Towards Autonomous Driving in Challenging Environments. [<a href="https://arxiv.org/abs/1909.07541">Paper</a>]</p>
+<blockquote>
+<p>一个数据集，相比于KITTI，更具挑战性和多样性，扩展了大量重度遮挡和夜间帧，解决了现有数据集的空白。</p>
+</blockquote>
+<p>[arXiv 2020] JRMOT: A Real-Time 3D Multi-Object Tracker and a New Large-Scale Dataset. [<a href="https://arxiv.org/abs/2002.08397">Paper</a>] [<a href="https://github.com/StanfordVL/JRMOT_ROS">Code</a>]</p>
+<blockquote>
+<p>本文提出了一个新型的3D MOT系统：JRMOT，它将2D RGB图像和3D点云的信息集成到一个实时框架中。同时使用一个联合概率数据关联框架（JPDA）以实现实时的3D MOT。我们在标准KITTI数据集上验证明了框架的有效性，并在所有已发表的在线实时跟踪方法中，在二维跟踪基准中实现了最先进的性能。同时保证了实时运行。</p>
+<p><img src="/images/image-20200531213019876.png" alt=""></p>
+</blockquote>
+<p>[arXiv 2020] Probabilistic 3D Multi-Object Tracking for Autonomous Driving. [<a href="https://arxiv.org/abs/2001.05673">Paper</a>] [<a href="https://github.com/eddyhkchiu/mahalanobis_3d_multi_object_tracking">Code</a>]</p>
+<blockquote>
+<p>本文使用基于KF的常速度模型进行多目标跟踪，在NuScenes数据集上多目标跟踪第一。相比于baseline模型，该方法使用Mahalanobis距离作为关联特征；使用贪心算法进行匹配；状态考虑角速度；建模未知的加速度作为高斯随机变量；利用训练数据集的统计学信息来初始化状态和噪音协方差矩阵。</p>
+</blockquote>
+<p>[arXiv 2020] Fast  Lidar  Clustering  by  Density  and  Connectivity. [<a href="https://arxiv.org/abs/2003.00575">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种用于Lidar点云数据的实时实例分割算法。我们展示了我们的方法如何利用欧几里得距离的特性来保留三维测量信息，同时缩小到二维表示以实现快速计算。我们进一步介绍了我们所谓的跳过连接，以使我们的方法在部分遮挡的情况下，能够很好地避免过分割。通过对公共数据的详细评估，并与已有的方法进行比较，本方法在单个CPU内核上实现了最先进的性能和运行时间。</p>
+</blockquote>
+<p>[arXiv 2020]  A LiDAR-based real-time capable 3D Perception System for Automated Driving in Urban Domains. [<a href="https://arxiv.org/abs/2005.03404">Paper</a>]</p>
+<blockquote>
+<p>本文提出了一种基于LiDAR的、具有实时能力的三维感知系统，用于城市环境的自动驾驶。我们描述了一个可以实时运行的点云处理流水线，包括自适应地面估计、三维聚类和运动分类。多层语义网格图和基于IMM-EKF的对象跟踪以及部分遮挡的显式建模。</p>
+</blockquote>
+<p>[arXiv 2020] 3D Point Cloud Processing and Learning for Autonomous Driving. [<a href="https://arxiv.org/abs/2003.00601">Paper</a>]</p>
+<blockquote>
+<p>无人驾驶中的Lidar点云处理综述。</p>
+</blockquote>
+<p>[arXiv 2020] Lidar for Autonomous Driving: The principles, challenges, and trends for automotive lidar and perception systems. [<a href="https://arxiv.org/abs/2004.08467">Paper</a>]</p>
+<blockquote>
+<p>综述：本文介绍了最先进的汽车LiDAR技术以及与这些技术配套使用的感知算法。</p>
+</blockquote>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -569,12 +588,8 @@ Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></p
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Apollo/">
-                                    <span class="chip bg-color">Apollo</span>
-                                </a>
-                            
-                                <a href="/tags/ROI/">
-                                    <span class="chip bg-color">ROI</span>
+                                <a href="/tags/Lidar-detection/">
+                                    <span class="chip bg-color">Lidar detection</span>
                                 </a>
                             
                         </div>
@@ -875,9 +890,10 @@ Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></p
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2020/08/27/wen-xian-diao-yan-jin-liang-nian-ji-yu-lidar-de-chuan-tong-jian-ce-fang-fa/">
                     <div class="card-image">
@@ -897,9 +913,9 @@ Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></p
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-08-27
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-27
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -908,6 +924,7 @@ Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></p
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -923,7 +940,7 @@ Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></p
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
                 <a href="/2020/03/01/hdmap-roi/">
@@ -957,7 +974,6 @@ Ctrl<span class="token operator">+</span>D 打开该函数的源代码</code></p
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
