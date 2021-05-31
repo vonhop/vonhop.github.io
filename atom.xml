@@ -44,11 +44,11 @@
   </entry>
   
   <entry>
-    <title>(paper_reading) VoxelNet</title>
-    <link href="https://vonhop.github.io/2020/08/27/voxelnet/"/>
-    <id>https://vonhop.github.io/2020/08/27/voxelnet/</id>
+    <title>(paper_reading) PointNet</title>
+    <link href="https://vonhop.github.io/2020/08/27/pointnet/"/>
+    <id>https://vonhop.github.io/2020/08/27/pointnet/</id>
     <published>2020-08-27T08:11:07.000Z</published>
-    <updated>2020-08-27T10:56:09.981Z</updated>
+    <updated>2020-08-27T10:56:02.238Z</updated>
     
     <summary type="html">
     
@@ -56,7 +56,7 @@
       
         
         
-          &lt;h4 id=&quot;2018-CVPR-VoxelNet-End-to-End-Learning-for-Point-Cloud-Based-3D-Object-Detection&quot;&gt;&lt;a
+          &lt;h4 id=&quot;2017-CVPR-《PointNet-Deep-Learning-on-Point-Sets-for-3D-Classification-and-Segmentation》&quot;&gt;&lt;a
         
       
     
@@ -71,11 +71,11 @@
   </entry>
   
   <entry>
-    <title>(paper_reading) PointNet</title>
-    <link href="https://vonhop.github.io/2020/08/27/pointnet/"/>
-    <id>https://vonhop.github.io/2020/08/27/pointnet/</id>
+    <title>(paper_reading) VoxelNet</title>
+    <link href="https://vonhop.github.io/2020/08/27/voxelnet/"/>
+    <id>https://vonhop.github.io/2020/08/27/voxelnet/</id>
     <published>2020-08-27T08:11:07.000Z</published>
-    <updated>2020-08-27T10:56:02.238Z</updated>
+    <updated>2020-08-27T10:56:09.981Z</updated>
     
     <summary type="html">
     
@@ -83,7 +83,7 @@
       
         
         
-          &lt;h4 id=&quot;2017-CVPR-《PointNet-Deep-Learning-on-Point-Sets-for-3D-Classification-and-Segmentation》&quot;&gt;&lt;a
+          &lt;h4 id=&quot;2018-CVPR-VoxelNet-End-to-End-Learning-for-Point-Cloud-Based-3D-Object-Detection&quot;&gt;&lt;a
         
       
     
